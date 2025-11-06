@@ -1,0 +1,100 @@
+III.(Đông) Bài toán Client và Server với giao thức TCP
+Nhiệm vụ của bạn: Viết 1 solution trong đó có chứa client và server ở dạng console. Yêu cầu sử dụng TCP làm giao thức kết nối cho Client và Server (có thể sử dụng địa chỉ IP tại 127.0.0.1:3000 làm cổng kết nối.)
+ Mô tả bài toán: Hệ thống cho phép người dùng nhập vào tên của 1 user từ client sau đó server sẽ phải xử lý thông tin nhận từ client và trả về các thông tin được yêu cầu dưới đây:
+	2.1: Đưa ra thông tin của user đó(Id,Name,Địa chỉ,Giới tính) nếu không có user đó thì đẩy ra message "Người dùng không tồn tại"
+	2.2: Nếu trong bảng Order có thông tin của User đó thì ta sẽ cần phải list ra thông tin Order + Order Detail của User đó và nếu không có thì sẽ không cần đưa ra bất kì 		thông tin gì.
+Cấu trúc database
+	3.1 User
+		- Id(int): PrimaryKey
+		- FullName(string)
+		- Địa chỉ(string)
+		- Gender(int)
+	3.2 Product
+		- Id(int): Primary key
+		- Name(string)
+	3.3 Order
+		- Id(int): Primary key
+		- UserId(int): Foreign Key
+		- OrderDate(DateTime)
+		- Status(int): 1.Done, 2.Cancel, 3. Prcoessing
+	3.4 OrderDetail
+		- Id(int): Primary Key
+		- OrderId(int): Foreign Key
+		- ProductId(int): Foreign Key
+		- Quantity(int)
+4. Yêu cầu cụ thể
+	4.1 Client(5đ)
+		4.1.1: Màn hình chờ client input(0.5đ)
+			- Liên tục yêu cầu người dùng nhập 1 string
+			- Nếu người dùng nhập 0 chương trình sẽ được đóng lại.
+		4.1.2: Kiểm tra Input(0.5đ)
+			- Kiểm tra nếu người dùng nhập empty.
+			- Nếu người dùng nhập empty, sẽ hiển thị ra thông tin lỗi ở trên cửa sổ console.
+			* Examples of invalid Input:
+				Enter Name's Customer(or press 0 to exit): 
+				Invalid input! Please enter a valid Name's User.
+		4.1.3: Kết nối với server(1đ)
+			- Thiết lập kết nối TCP với server (có thể tại địa chỉ 127.0.0.1:3000)
+			- Gửi 1 string đã nhập từ client đến server.
+			- Nếu server không hoạt động hoặc kết nối thất bại thì sẽ hiển thị ra thông tin lỗi đó là (ex: "Server is not running.Please try again later") và trả về 				màn hình client đợi input mới.
+			* Examples:
+				Enter Name's Customer(or press 0 to exit): an
+				Server is not running. Please try again later.
+				Enter Name's Customer(or press 0 to exit):
+		4.1.4: Quá trình phản hồi của Server(3đ)
+			- Server sẽ phản hồi dữ liệu ở dạng đối tượng XMl cho Client và phải deserialize nó.
+			- Customer not found(null): Hiển thị "User does not exist in the database"(0.5đ)
+			- Customer exits with no orders: Hiển thị thông tin khách hàng đó.(1đ)
+			- Customer exits with orders: Hiển thị thông tin người dùng đó + hiển thị thông tin của Order + OrderDetail của người dùng đó.(1.5đ)
+			* Examples:
+				Enter Name's Customer(or press 0 to exit): an
+				User does not exist in the database
+			-----------------------------------------
+			* Examples:
+				Enter Name's Customer(or press 0 to exit): anh
+				Tên: Nguyen Van Anh
+				Giới tính: Nam
+				Địa chỉ: Hà Nội
+			-----------------------------------------
+			* Examples:
+				Enter Name's Customer(or press 0 to exit): John Smith
+				
+				Id: 1
+				FullName: John Smith,
+				Address: New York,
+				Gender: Male
+				Order: 
+					Id: 1,
+					OrderDate: 10/10/2024
+					Status: Done,
+					Details:
+						ProductName: Logitech M90 Mouse,
+						Quantity: 1
+						ProductName: DareU EK87 Keyboard,
+						Quantity: 2
+					Id: 2,
+					OrderDate: 11/05/2024
+					Status: Processing,
+					Details:
+						ProductName: Dell 24 inch Monitor,
+						Quantity: 1
+				Enter customer name (or press 0 to exit): 			
+	4.2 Server(5đ)
+		4.2.1: Màn hình của Server(0.5đ)
+			- Hiển thị thông tin địa chỉ hoạt động của server.
+			* Examples:
+				Waiting for client connections...
+		4.2.2: Nhận dữ liệu từ Client(0.5đ)
+			- Khi có client kết nối, đọc dữ liệu nhận được(name's user) và hiển thị lên console của server thông tin và client gửi đến.
+			* Examples:
+				Client sends a request: Anh
+		4.2.3: Truy vấn database + Phản hồi dữ liệu(3.5)
+			- Dựa trên thông tin name's user nhận được ta cần truy vấn dữ liệu.
+			- Đóng gói dữ liệu phản hồi ở dạng XML và gửi đến client qua TCP.
+			- Nếu không có user -> trả về 1 User rỗng.(0.5đ)
+			- Nếu có User lấy thông tin:
+				+) Id,FullName,Address,gender(1đ)
+				+) Các Order và OrderDetail liên quan đến User(nếu có).(1.5đ)
+	5. Lưu ý
+		Sinh viên khai báo địa chỉ kết và và port trong appsettings.
+Các phương thức để in ra kết quả, in ra các message đã được định nghĩa trong class Helper.cs, sinh viên cần phải gọi các phương thức để sử dụng cho các mục đích in ra(message prompt input và output result) để đảm bảo đúng định dạng của output, sinh viên không sử dụng có thể khiến output không đúng định dạng và bài làm không được chấp nhận.
