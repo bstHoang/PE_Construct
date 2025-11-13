@@ -30,7 +30,6 @@ public partial class TcpServerClientContext : DbContext
         {
             // Đọc file appsettings.json
             var config = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 

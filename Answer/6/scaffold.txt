@@ -1,0 +1,16 @@
+ dotnet ef dbcontext scaffold "server=LEON-LOQ;database=Library;uid=sa;pwd=sa;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer --output-dir Models
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            // Ð?c file appsettings.json
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
+            var connectionString = config.GetConnectionString("MyCnn");
+
+            optionsBuilder.UseSqlServer(connectionString);
+        }
+    }
